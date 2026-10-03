@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model booking {
+  id               Int             @id @default(autoincrement())
+  userid           Int
+  hotelId          Int
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  bookingAmount    Int
+  status           BookingStatus   @default(PENDING)
+  idempotencyKeyId Int?            @unique
+  idempotencyKey   IdempotencyKey? @relation(fields: [idempotencyKeyId], references: [id])
+}
+
+model IdempotencyKey {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Booking   booking?
+  finalized Boolean  @default(false)
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
