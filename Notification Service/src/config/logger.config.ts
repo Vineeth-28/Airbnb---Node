@@ -20,7 +20,7 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console(),
-    
+
     new DailyRotateFile({
       filename: 'logs/%DATE%-app.log',
       datePattern: 'YYYY-MM-DD',
@@ -32,16 +32,16 @@ const logger = winston.createLogger({
     new winston.transports.MongoDB({
       level: 'info',
       db: process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase', // Fallback to local MongoDB if env variable is not set
-      options: { 
-        useUnifiedTopology: true 
+      options: {
+        useUnifiedTopology: true,
       },
       collection: 'logs',
       // Automatically treats collection as capped (auto-clears old logs)
-      capped: true,            
+      capped: true,
       cappedSize: 52428800, // 50MB in bytes (adjust as needed)
       // Stores correlationId and other metadata under a clean structure
-      metaKey: 'meta' 
-    })
+      metaKey: 'meta',
+    }),
   ],
 });
 

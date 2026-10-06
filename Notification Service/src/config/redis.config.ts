@@ -7,20 +7,17 @@ function connectToRedis() {
   const redisConfig = {
     host: serverConfig.REDIS_HOST,
     port: Number(serverConfig.REDIS_PORT),
-    maxRetriesPerRequest:null //disable automatic reconnection 
-    
+    maxRetriesPerRequest: null, //disable automatic reconnection
   };
 
   return () => {
     if (!connection) {
       try {
         connection = new Redis(redisConfig);
-        
-  
+
         connection.on('error', (error) => {
           console.error('Redis connection error:', error);
         });
-
       } catch (error) {
         console.error('Failed to initialize Redis client:', error);
         throw error;

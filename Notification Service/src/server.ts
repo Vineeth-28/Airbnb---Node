@@ -13,6 +13,7 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
 import { mailerQueue } from './queues/mailer-queue';
 import { authenticateBullBoard } from './middlewares/bull-board-auth.middleware';
+import { renderMailTemplate } from './templates/templates.handler';
 
 const app: Application = express();
 
@@ -35,21 +36,14 @@ app.use('/api/v1', v1Router);
 app.use('/api/v2', v2Router);
 app.use(genericErrorHandler);
 
-app.listen(serverConfig.PORT, () => {
+app.listen(serverConfig.PORT, async () => {
   logger.info(`Server is running on http://localhost:${serverConfig.PORT}`);
   logger.info(`Press Ctrl+C to stop the server.`);
   setupMailerWorker();
   logger.info(`Mailer worker setup Completed`);
-
-
-  const sampleNotifcationDto: NotificationDTO = {
-    to: 'Sample',
-    subject: 'Test',
-    templateId: 'sample-tempalate',
-    params: {
-      name: 'john Doe',
-      orderId: '1242',
-    },
-  };
-  addEmailToQueue(sampleNotifcationDto);
+  const response = await renderMailTemplate('welcome', {
+    name: 'John Doe',
+    appname: 'Booking.com',
+  });
+  console.log(`Rendered email ,${response}`);
 });
